@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] New invoice states:
+- [x] New invoice states:
     - `ready`
         - This is to flag invoices that have been pre-validated and are ready to be paid
     - `failed`
