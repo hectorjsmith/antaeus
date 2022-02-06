@@ -1,5 +1,9 @@
 # Major Decisions
 
+## Branching Strategy (or lack thereof)
+
+I intentionally didn't use any branching strategy for this exercise. All commits were made directly to the `master` branch. Creating branches and pull requests for each change/step would add extra effort that I felt would not provide much value - I am the only person working on this.
+
 ## Pre Validation Batch Job
 
 TODO: Better explain thought process
