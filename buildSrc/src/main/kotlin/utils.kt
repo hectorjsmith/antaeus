@@ -13,6 +13,9 @@ fun Project.kotlinProject() {
         // Kotlin libs
         "implementation"(kotlin("stdlib"))
 
+        // Joda time
+        "implementation"("joda-time:joda-time:2.10.2")
+
         // Logging
         "implementation"("org.slf4j:slf4j-simple:1.7.30")
         "implementation"("io.github.microutils:kotlin-logging:1.7.8")

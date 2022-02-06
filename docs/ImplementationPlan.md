@@ -5,7 +5,7 @@
         - This is to flag invoices that have been pre-validated and are ready to be paid
     - `failed`
         - To flag invoices that have failed for some reason
-- [ ] New fields on invoices:
+- [x] New fields on invoices:
     - `nextRetry` (datetime)
         - For failed invoices, determines when the invoice should be processed again
 - [ ] New notification service
