@@ -15,6 +15,8 @@
     - Add dependency on Quartz
     - Define placeholder job definitions
     - Ensure each job cannot run multiple times in parallel
+- [ ] Support updating existing invoices
+    - Only some fields are editable (`status` & `nextRetry`)
 - [ ] New recurring job to pre-validate invoices
     - Runs every hour
     - Can be run on-demand (by using an API)
