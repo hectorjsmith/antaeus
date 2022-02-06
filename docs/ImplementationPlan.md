@@ -1,0 +1,41 @@
+# Implementation Plan
+
+- [ ] New invoice states:
+    - `ready`
+        - This is to flag invoices that have been pre-validated and are ready to be paid
+    - `failed`
+        - To flag invoices that have failed for some reason
+- [ ] New fields on invoices:
+    - `nextRetry` (datetime)
+        - For failed invoices, determines when the invoice should be processed again
+- [ ] New notification service
+    - Just a mock service, not actually implemented
+    - Allows queuing up notifications to be sent to either an account owner or to a system admin
+- [ ] Create new submodule for batch processing
+    - Add dependency on Quartz
+    - Define placeholder job definitions
+    - Ensure each job cannot run multiple times in parallel
+- [ ] New recurring job to pre-validate invoices
+    - Runs every hour
+    - Can be run on-demand (by using an API)
+    - Finds all "pending" invoices and validates them
+    - Invoices that fail validation have their state set to "failed" (see error-handling for more behaviour)
+    - Invoices that pass validation get their state set to "ready"
+- [ ] New recurring job to pay invoices
+    - Runs on the first day of the month
+    - Finds all "ready" invoices and tries to pay them
+    - Ignore any dates, just grab all of them
+    - Sets the state to "paid" on success
+        - When invoice is marked as paid, notification sent to account owner
+    - Sets the state to "failed" on any error
+- [ ] New recurring job to retry failed invoices
+    - Runs every hour
+    - Finds all invoices with "failed" status and a non-null and past `retryTime` and processes them again
+    - Try to pay the invoice if validations pass
+    - When a failed invoice goes from "failed" to "paid", send a notification to the admin
+- [ ] New `rest/v1/invoices/{id}/retry` API
+    - New API endpoint to re-process a given invoice
+    - This ignores the next retry value
+    - Will throw an exception if the invoice status is not "failed"
+- [ ] New `rest/v1/job/pre-validation/run` API
+    - Runs the pre-validation batch job on demand

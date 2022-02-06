@@ -8,6 +8,12 @@ Welcome to our challenge.
 
 As most "Software as a Service" (SaaS) companies, Pleo needs to charge a subscription fee every month. Our database contains a few invoices for the different markets in which we operate. Your task is to build the logic that will schedule payment of those invoices on the first of the month. While this may seem simple, there is space for some decisions to be taken and you will be expected to justify them.
 
+## My Solution
+
+* [How I spent my time](docs/TimeTracker.md)
+* [Major decisions I made](docs/MajorDecisions.md)
+* [My implementation plan / todo list](docs/ImplementationPlan.md)
+
 ## Instructions
 
 Fork this repo with your solution. Ideally, we'd like to see your progression through commits, and don't forget to update the README.md to explain your thought process.
