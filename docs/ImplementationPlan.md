@@ -14,7 +14,7 @@
 - [x] Create new submodule for batch processing
     - Add dependency on Quartz
     - Define placeholder job definitions
-- [ ] Support updating existing invoices
+- [x] Support updating existing invoices
     - Only some fields are editable (`status` & `nextRetry`)
 - [ ] New recurring job to pre-validate invoices
     - Runs every hour
