@@ -8,7 +8,7 @@
 - [x] New fields on invoices:
     - `nextRetry` (datetime)
         - For failed invoices, determines when the invoice should be processed again
-- [ ] New notification service
+- [x] New notification service
     - Just a mock service, not actually implemented
     - Allows queuing up notifications to be sent to either an account owner or to a system admin
 - [ ] Create new submodule for batch processing

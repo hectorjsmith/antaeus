@@ -7,6 +7,7 @@
 
 package io.pleo.antaeus.app
 
+import getNotificationService
 import getPaymentProvider
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
@@ -24,6 +25,7 @@ fun main() {
 
     // Get third parties
     val paymentProvider = getPaymentProvider()
+    val notificationService = getNotificationService()
 
     // Create core services
     val invoiceService = InvoiceService(dal = dal)

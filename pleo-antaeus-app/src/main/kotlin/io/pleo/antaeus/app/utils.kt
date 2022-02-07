@@ -1,10 +1,12 @@
 
+import io.pleo.antaeus.core.external.NotificationService
 import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.models.Currency
 import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
 import io.pleo.antaeus.models.Money
+import mu.KotlinLogging
 import java.math.BigDecimal
 import kotlin.random.Random
 
@@ -35,6 +37,20 @@ internal fun getPaymentProvider(): PaymentProvider {
     return object : PaymentProvider {
         override fun charge(invoice: Invoice): Boolean {
                 return Random.nextBoolean()
+        }
+    }
+}
+
+internal fun getNotificationService(): NotificationService {
+    return object : NotificationService {
+        val logger = KotlinLogging.logger("notificationService")
+
+        override fun notifyAccountOwner(accountId: Int, invoiceId: Int, message: String) {
+            logger.info("[acc: ${accountId}; invoice: ${invoiceId}] toOwner: $message")
+        }
+
+        override fun notifyAdministrator(invoiceId: Int, message: String) {
+            logger.info("[invoice: ${invoiceId}] toAdmin: $message")
         }
     }
 }
