@@ -11,10 +11,9 @@
 - [x] New notification service
     - Just a mock service, not actually implemented
     - Allows queuing up notifications to be sent to either an account owner or to a system admin
-- [ ] Create new submodule for batch processing
+- [x] Create new submodule for batch processing
     - Add dependency on Quartz
     - Define placeholder job definitions
-    - Ensure each job cannot run multiple times in parallel
 - [ ] Support updating existing invoices
     - Only some fields are editable (`status` & `nextRetry`)
 - [ ] New recurring job to pre-validate invoices
@@ -23,6 +22,7 @@
     - Finds all "pending" invoices and validates them
     - Invoices that fail validation have their state set to "failed" (see error-handling for more behaviour)
     - Invoices that pass validation get their state set to "ready"
+- [ ] Update jobs to ensure they cannot run multiple times in parallel
 - [ ] New recurring job to pay invoices
     - Runs on the first day of the month
     - Finds all "ready" invoices and tries to pay them
