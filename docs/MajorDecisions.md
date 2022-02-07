@@ -4,6 +4,14 @@
 
 I intentionally didn't use any branching strategy for this exercise. All commits were made directly to the `master` branch. Creating branches and pull requests for each change/step would add extra effort that I felt would not provide much value - I am the only person working on this.
 
+## Testing Database Functions
+
+I added some tests for the DAL (Database Access Layer) in the `pleo-antaeus-app` project. Since these tests are testing methods that come from the `pleo-antaeus-data` project, they would ideally go in the `data` project, to keep them closer to the code they are testing. However, I wrote them in the `app` project because it's the only place that has a real database.
+
+I considered using mocking to test these functions, but I decided that would defeat the purpose of the tests. With these tests I want to ensure that the code interacts with the database correctly. Using a mock would only ensure that those functions work correctly with a given mock implementation, not the a database.
+
+Another option would be to copy the code creating and initializing the database into the test package of the `data` project. I decided against that because I wanted to maintain the existing structure of keeping the *abstract* database code (in the `data` project) apart from the *actual* database creation (in the `app` project).
+
 ## Pre Validation Batch Job
 
 TODO: Better explain thought process
