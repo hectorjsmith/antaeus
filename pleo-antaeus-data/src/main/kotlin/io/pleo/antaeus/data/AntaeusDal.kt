@@ -46,6 +46,7 @@ class AntaeusDal(private val db: Database) {
                     it[this.currency] = amount.currency.toString()
                     it[this.status] = status.toString()
                     it[this.customerId] = customer.id
+                    it[this.creationTime] = DateTime.now()
                     it[this.nextRetry] = null
                 } get InvoiceTable.id
         }

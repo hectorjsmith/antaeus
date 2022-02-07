@@ -7,5 +7,6 @@ data class Invoice(
     val customerId: Int,
     val amount: Money,
     val status: InvoiceStatus,
+    val creationTime: DateTime,
     val nextRetry: DateTime?
 )

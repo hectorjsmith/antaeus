@@ -16,6 +16,8 @@
     - Define placeholder job definitions
 - [x] Support updating existing invoices
     - Only some fields are editable (`status` & `nextRetry`)
+- [x] Add `creationTime` field to invoices
+    - This is set to `now()` on creation and cannot be changed
 - [ ] New recurring job to pre-validate invoices
     - Runs every hour
     - Can be run on-demand (by using an API)
