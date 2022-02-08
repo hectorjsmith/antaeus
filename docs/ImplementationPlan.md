@@ -18,6 +18,12 @@
     - Only some fields are editable (`status` & `nextRetry`)
 - [x] Add `creationTime` field to invoices
     - This is set to `now()` on creation and cannot be changed
+- [x] Implement `BillingService` class to process invoices
+- [ ] New recurring job to pay invoices
+    - Runs on the first day of the month
+    - Finds all "ready" invoices and tries to pay them
+    - Only grab invoices where the creation date is before the end of the previous month
+    - Delegate processing of each invoice to the `BillingService`
 - [ ] New recurring job to pre-validate invoices
     - Runs every hour
     - Can be run on-demand (by using an API)
@@ -25,13 +31,6 @@
     - Invoices that fail validation have their state set to "failed" (see error-handling for more behaviour)
     - Invoices that pass validation get their state set to "ready"
 - [ ] Update jobs to ensure they cannot run multiple times in parallel
-- [ ] New recurring job to pay invoices
-    - Runs on the first day of the month
-    - Finds all "ready" invoices and tries to pay them
-    - Ignore any dates, just grab all of them
-    - Sets the state to "paid" on success
-        - When invoice is marked as paid, notification sent to account owner
-    - Sets the state to "failed" on any error
 - [ ] New recurring job to retry failed invoices
     - Runs every hour
     - Finds all invoices with "failed" status and a non-null and past `retryTime` and processes them again
