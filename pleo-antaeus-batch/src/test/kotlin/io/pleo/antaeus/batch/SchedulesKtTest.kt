@@ -1,6 +1,5 @@
-package io.pleo.antaeus.batch.job
+package io.pleo.antaeus.batch
 
-import io.pleo.antaeus.batch.firstDayOfEachMonth
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -9,7 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Stream
 
-class SchedulesTest {
+class SchedulesKtTest {
 
     companion object {
         @JvmStatic
