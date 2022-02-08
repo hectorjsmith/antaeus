@@ -13,7 +13,6 @@ import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
 import io.pleo.antaeus.models.Money
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -37,6 +36,18 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
+    fun fetchInvoices(statusList: Set<InvoiceStatus>, maxCreationTime: DateTime): List<Invoice> {
+        return transaction(db) {
+            InvoiceTable
+                .select {
+                    InvoiceTable
+                        .status.inList(statusList.map { it.toString() })
+                        .and(InvoiceTable.creationTime.less(maxCreationTime))
+                }
+                .map { it.toInvoice() }
+        }
+    }
+
     fun createInvoice(amount: Money, customer: Customer, status: InvoiceStatus = InvoiceStatus.PENDING): Invoice? {
         val id = transaction(db) {
             // Insert the invoice and returns its new id.
@@ -52,6 +63,10 @@ class AntaeusDal(private val db: Database) {
         }
 
         return fetchInvoice(id)
+    }
+
+    fun updateInvoice(invoice: Invoice): Invoice? {
+        return updateInvoice(invoice, invoice.status, invoice.nextRetry)
     }
 
     fun updateInvoice(invoice: Invoice, status: InvoiceStatus): Invoice? {
