@@ -19,7 +19,7 @@
 - [x] Add `creationTime` field to invoices
     - This is set to `now()` on creation and cannot be changed
 - [x] Implement `BillingService` class to process invoices
-- [ ] New recurring job to pay invoices
+- [x] New recurring job to pay invoices
     - Runs on the first day of the month
     - Finds all "ready" invoices and tries to pay them
     - Only grab invoices where the creation date is before the end of the previous month
