@@ -51,7 +51,7 @@ internal class BatchInvoicePaymentWorkerTest {
         }
 
         val billingService = mockk<BillingService> {
-            every { processInvoice(capture(invoiceSlot)) } answers { invoiceSlot.captured }
+            every { processAndSaveInvoice(capture(invoiceSlot), any()) } answers { invoiceSlot.captured }
         }
 
         val worker = BatchInvoicePaymentWorker(
@@ -63,40 +63,6 @@ internal class BatchInvoicePaymentWorkerTest {
         worker.run()
 
         // Assert
-        verify(exactly = 3) { billingService.processInvoice(any()) }
-        verify(exactly = 3) { invoiceService.update(any()) }
-    }
-
-    @Test
-    fun given_BatchWorker_When_ExceptionThrownDuringRun_Then_AllOtherInvoicesProcessed() {
-        // Assemble
-        val invoiceSlot = slot<Invoice>()
-        val invoiceService = mockk<InvoiceService> {
-            every { fetchAllByStatusAndMaxCreationTime(any(), any()) } returns listOf(
-                Invoice(10, 20, Money(BigDecimal.valueOf(10), Currency.EUR), InvoiceStatus.READY, DateTime.now(), null),
-                Invoice(11, 20, Money(BigDecimal.valueOf(20), Currency.EUR), InvoiceStatus.READY, DateTime.now(), null),
-                Invoice(12, 20, Money(BigDecimal.valueOf(30), Currency.EUR), InvoiceStatus.READY, DateTime.now(), null),
-                Invoice(13, 20, Money(BigDecimal.valueOf(30), Currency.EUR), InvoiceStatus.READY, DateTime.now(), null)
-            )
-            every { update(capture(invoiceSlot)) } answers { invoiceSlot.captured }
-        }
-
-        val billingService = mockk<BillingService> {
-            every { processInvoice(capture(invoiceSlot)) } answers {
-                if (invoiceSlot.captured.id % 2 == 0) invoiceSlot.captured else throw IllegalArgumentException("test exception")
-            }
-        }
-
-        val worker = BatchInvoicePaymentWorker(
-            invoiceService,
-            billingService
-        )
-
-        // Act
-        worker.run()
-
-        // Assert
-        verify(exactly = 4) { billingService.processInvoice(any()) }
-        verify(exactly = 2) { invoiceService.update(any()) }
+        verify(exactly = 3) { billingService.processAndSaveInvoice(any(), any()) }
     }
 }

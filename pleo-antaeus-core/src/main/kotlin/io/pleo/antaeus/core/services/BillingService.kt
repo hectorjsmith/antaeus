@@ -8,12 +8,18 @@ import io.pleo.antaeus.core.external.NotificationService
 import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
+import mu.KotlinLogging
 import org.joda.time.DateTime
 
 class BillingService(
     private val notificationService: NotificationService,
     private val paymentProvider: PaymentProvider
 ) {
+    fun processAndSaveInvoice(invoice: Invoice, invoiceService: InvoiceService): Invoice {
+        val updatedInvoice = processInvoice(invoice)
+        return invoiceService.update(updatedInvoice)
+    }
+
     fun processInvoice(invoice: Invoice): Invoice {
         if (invoice.status == InvoiceStatus.PAID) {
             throw InvoiceAlreadyPaidException(invoice.id)

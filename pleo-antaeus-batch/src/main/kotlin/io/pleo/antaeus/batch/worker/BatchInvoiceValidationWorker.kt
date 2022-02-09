@@ -17,8 +17,7 @@ class BatchInvoiceValidationWorker(
         logger.info("Found ${invoices.size} invoices to process")
         invoices.forEach {
             try {
-                val validatedInvoice = invoiceValidationService.validateInvoice(it)
-                invoiceService.update(validatedInvoice)
+                invoiceValidationService.validateAndSaveInvoice(it, invoiceService)
             } catch(ex: Exception) {
                 logger.warn("Error validating invoice ${it.id}", ex)
             }

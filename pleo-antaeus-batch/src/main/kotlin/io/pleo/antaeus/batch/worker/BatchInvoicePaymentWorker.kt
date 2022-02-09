@@ -23,7 +23,11 @@ class BatchInvoicePaymentWorker(
 
         logger.info("Found ${invoices.size} invoices to process")
         invoices.forEach {
-            payInvoice(logger, billingService, invoiceService, it)
+            try {
+                billingService.processAndSaveInvoice(it, invoiceService)
+            } catch(ex: Exception) {
+                logger.error("Error paying invoice ${it.id}", ex)
+            }
         }
     }
 }

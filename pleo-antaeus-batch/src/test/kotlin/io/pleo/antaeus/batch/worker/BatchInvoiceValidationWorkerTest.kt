@@ -30,7 +30,7 @@ internal class BatchInvoiceValidationWorkerTest {
         }
 
         val validationService = mockk<InvoiceValidationService> {
-            every { validateInvoice(capture(invoiceSlot)) } answers { invoiceSlot.captured }
+            every { validateAndSaveInvoice(capture(invoiceSlot), any()) } answers { invoiceSlot.captured }
         }
 
         val worker = BatchInvoiceValidationWorker(
@@ -42,41 +42,7 @@ internal class BatchInvoiceValidationWorkerTest {
         worker.run()
 
         // Assert
-        verify(exactly = 3) { validationService.validateInvoice(any()) }
-        verify(exactly = 3) { invoiceService.update(any()) }
-    }
-
-    @Test
-    fun given_BatchWorker_When_ExceptionThrownDuringRun_Then_AllOtherInvoicesProcessed() {
-        // Assemble
-        val invoiceSlot = slot<Invoice>()
-        val invoiceService = mockk<InvoiceService> {
-            every { fetchAllByStatus(any()) } returns listOf(
-                newInvoice(1),
-                newInvoice(2),
-                newInvoice(3),
-                newInvoice(4)
-            )
-            every { update(capture(invoiceSlot)) } answers { invoiceSlot.captured }
-        }
-
-        val validationService = mockk<InvoiceValidationService> {
-            every { validateInvoice(capture(invoiceSlot)) } answers {
-                if (invoiceSlot.captured.id % 2 == 0) invoiceSlot.captured else throw InvoiceAlreadyPaidException(invoiceSlot.captured.id)
-            }
-        }
-
-        val worker = BatchInvoiceValidationWorker(
-            invoiceService,
-            validationService
-        )
-
-        // Act
-        worker.run()
-
-        // Assert
-        verify(exactly = 4) { validationService.validateInvoice(any()) }
-        verify(exactly = 2) { invoiceService.update(any()) }
+        verify(exactly = 3) { validationService.validateAndSaveInvoice(any(), any()) }
     }
 
     private fun newInvoice(id: Int): Invoice {

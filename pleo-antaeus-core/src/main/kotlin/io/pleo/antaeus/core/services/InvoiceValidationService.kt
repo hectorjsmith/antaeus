@@ -5,11 +5,17 @@ import io.pleo.antaeus.core.exceptions.InvoiceAlreadyPaidException
 import io.pleo.antaeus.core.external.NotificationService
 import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
+import mu.KotlinLogging
 
 class InvoiceValidationService(
     private val notificationService: NotificationService,
     private val customerService: CustomerService
 ) {
+    fun validateAndSaveInvoice(invoice: Invoice, invoiceService: InvoiceService): Invoice {
+        val validatedInvoice = validateInvoice(invoice)
+        return invoiceService.update(validatedInvoice)
+    }
+
     fun validateInvoice(invoice: Invoice): Invoice {
         if (invoice.status == InvoiceStatus.PAID) {
             throw InvoiceAlreadyPaidException(invoice.id)
