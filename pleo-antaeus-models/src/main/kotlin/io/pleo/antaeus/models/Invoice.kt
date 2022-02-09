@@ -8,5 +8,5 @@ data class Invoice(
     val amount: Money,
     val status: InvoiceStatus,
     val creationTime: DateTime,
-    val nextRetry: DateTime?
+    val retryPaymentTime: DateTime?
 )

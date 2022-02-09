@@ -64,8 +64,8 @@ internal class BillingServiceTest {
 
         // Assert
         Assertions.assertEquals(InvoiceStatus.FAILED, updatedInvoice.status, "Invoice status should be FAILED after failed processing")
-        Assertions.assertNotEquals(null, updatedInvoice.nextRetry, "Invoice retry time should not be null")
-        Assertions.assertTrue(updatedInvoice.nextRetry?.isAfterNow!!, "Invoice retry time should be in the future")
+        Assertions.assertNotEquals(null, updatedInvoice.retryPaymentTime, "Invoice retry time should not be null")
+        Assertions.assertTrue(updatedInvoice.retryPaymentTime?.isAfterNow!!, "Invoice retry time should be in the future")
     }
 
     @Test
@@ -82,8 +82,8 @@ internal class BillingServiceTest {
 
         // Assert
         Assertions.assertEquals(InvoiceStatus.FAILED, updatedInvoice.status, "Invoice status should be FAILED after failed processing")
-        Assertions.assertNotEquals(null, updatedInvoice.nextRetry, "Invoice retry time should not be null")
-        Assertions.assertTrue(updatedInvoice.nextRetry?.isAfterNow!!, "Invoice retry time should be in the future")
+        Assertions.assertNotEquals(null, updatedInvoice.retryPaymentTime, "Invoice retry time should not be null")
+        Assertions.assertTrue(updatedInvoice.retryPaymentTime?.isAfterNow!!, "Invoice retry time should be in the future")
     }
 
     @Test
@@ -100,7 +100,7 @@ internal class BillingServiceTest {
 
         // Assert
         Assertions.assertEquals(InvoiceStatus.FAILED, updatedInvoice.status, "Invoice status should be FAILED after failed processing")
-        Assertions.assertEquals(null, updatedInvoice.nextRetry, "Invoice retry time should be null")
+        Assertions.assertEquals(null, updatedInvoice.retryPaymentTime, "Invoice retry time should be null")
     }
 
     @Test
@@ -117,7 +117,7 @@ internal class BillingServiceTest {
 
         // Assert
         Assertions.assertEquals(InvoiceStatus.FAILED, updatedInvoice.status, "Invoice status should be FAILED after failed processing")
-        Assertions.assertEquals(null, updatedInvoice.nextRetry, "Invoice retry time should be null")
+        Assertions.assertEquals(null, updatedInvoice.retryPaymentTime, "Invoice retry time should be null")
     }
 
     private fun newInvoiceReadyForProcessing(): Invoice {

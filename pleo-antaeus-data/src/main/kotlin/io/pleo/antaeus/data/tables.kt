@@ -14,7 +14,7 @@ object InvoiceTable : Table() {
     val customerId = reference("customer_id", CustomerTable.id)
     val status = text("status")
     val creationTime = datetime("creationTime")
-    val nextRetry = datetime("nextRetry").nullable()
+    val retryPaymentTime = datetime("retryPaymentTime").nullable()
 }
 
 object CustomerTable : Table() {

@@ -69,7 +69,7 @@ class AntaeusDal(private val db: Database) {
                     it[this.status] = status.toString()
                     it[this.customerId] = customer.id
                     it[this.creationTime] = DateTime.now()
-                    it[this.nextRetry] = null
+                    it[this.retryPaymentTime] = null
                 } get InvoiceTable.id
         }
 
@@ -77,11 +77,11 @@ class AntaeusDal(private val db: Database) {
     }
 
     fun updateInvoice(invoice: Invoice): Invoice? {
-        return updateInvoice(invoice, invoice.status, invoice.nextRetry)
+        return updateInvoice(invoice, invoice.status, invoice.retryPaymentTime)
     }
 
     fun updateInvoice(invoice: Invoice, status: InvoiceStatus): Invoice? {
-        return updateInvoice(invoice, status, invoice.nextRetry)
+        return updateInvoice(invoice, status, invoice.retryPaymentTime)
     }
 
     fun updateInvoice(invoice: Invoice, status: InvoiceStatus, nextRetry: DateTime?): Invoice? {
@@ -91,7 +91,7 @@ class AntaeusDal(private val db: Database) {
                     where = { InvoiceTable.id.eq(invoice.id)},
                     body = {
                         it[this.status] = status.toString()
-                        it[this.nextRetry] = nextRetry
+                        it[this.retryPaymentTime] = nextRetry
                     }
                 )
         }

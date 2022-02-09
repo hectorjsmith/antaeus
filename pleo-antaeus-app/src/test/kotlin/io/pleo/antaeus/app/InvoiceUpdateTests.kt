@@ -51,13 +51,13 @@ class InvoiceUpdateTests {
         // Assert
         Assertions.assertEquals(
             newRetryTime,
-            updatedInvoice.nextRetry,
-            "Invoice retryTime should be updated on returned object"
+            updatedInvoice.retryPaymentTime,
+            "Invoice retryPaymentTime should be updated on returned object"
         )
         Assertions.assertEquals(
             newRetryTime,
-            reloadedInvoice.nextRetry,
-            "Invoice retryTime should be updated in database"
+            reloadedInvoice.retryPaymentTime,
+            "Invoice retryPaymentTime should be updated in database"
         )
     }
 
@@ -91,8 +91,8 @@ class InvoiceUpdateTests {
         )
         Assertions.assertEquals(
             newRetryTime,
-            updatedInvoice1.nextRetry,
-            "Invoice retryTime should be updated on returned object"
+            updatedInvoice1.retryPaymentTime,
+            "Invoice retryPaymentTime should be updated on returned object"
         )
         Assertions.assertNotEquals(
             newStatus,
@@ -101,8 +101,8 @@ class InvoiceUpdateTests {
         )
         Assertions.assertNotEquals(
             newRetryTime,
-            reloadedInvoice2.nextRetry,
-            "Invoice retryTime should not be updated on unrelated invoice"
+            reloadedInvoice2.retryPaymentTime,
+            "Invoice retryPaymentTime should not be updated on unrelated invoice"
         )
     }
 }

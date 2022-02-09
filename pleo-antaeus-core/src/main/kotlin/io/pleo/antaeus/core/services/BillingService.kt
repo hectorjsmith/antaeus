@@ -47,7 +47,7 @@ class BillingService(
                 "Errors resolved and invoice paid"
             )
         }
-        return invoice.copy(status = InvoiceStatus.PAID, nextRetry = null)
+        return invoice.copy(status = InvoiceStatus.PAID, retryPaymentTime = null)
     }
 
     private fun handleInsufficientFunds(invoice: Invoice): Invoice {
@@ -60,7 +60,7 @@ class BillingService(
             invoice.id,
             "Invoice not paid due to insufficient funds"
         )
-        return invoice.copy(status = InvoiceStatus.FAILED, nextRetry = DateTime.now().plusDays(1))
+        return invoice.copy(status = InvoiceStatus.FAILED, retryPaymentTime = DateTime.now().plusDays(1))
     }
 
     private fun handleCurrencyMismatch(invoice: Invoice, ex: CurrencyMismatchException): Invoice {
@@ -68,7 +68,7 @@ class BillingService(
             invoice.id,
             "Invoice not paid due to a currency mismatch: ${ex.message}"
         )
-        return invoice.copy(status = InvoiceStatus.FAILED, nextRetry = null)
+        return invoice.copy(status = InvoiceStatus.FAILED, retryPaymentTime = null)
     }
 
     private fun handleCustomerNotFound(invoice: Invoice, ex: CustomerNotFoundException): Invoice {
@@ -76,7 +76,7 @@ class BillingService(
             invoice.id,
             "Invoice not paid due to a missing account: ${ex.message}"
         )
-        return invoice.copy(status = InvoiceStatus.FAILED, nextRetry = null)
+        return invoice.copy(status = InvoiceStatus.FAILED, retryPaymentTime = null)
     }
 
     private fun handleNetworkException(invoice: Invoice, ex: NetworkException): Invoice {
@@ -84,7 +84,7 @@ class BillingService(
             invoice.id,
             "Network error while trying to pay invoice: ${ex.message}"
         )
-        return invoice.copy(status = InvoiceStatus.FAILED, nextRetry = DateTime.now().plusHours(1))
+        return invoice.copy(status = InvoiceStatus.FAILED, retryPaymentTime = DateTime.now().plusHours(1))
     }
 
     private fun handleOtherException(invoice: Invoice, ex: Exception): Invoice {
@@ -92,6 +92,6 @@ class BillingService(
             invoice.id,
             "Unknown error while processing invoice: ${ex.message}"
         )
-        return invoice.copy(status = InvoiceStatus.FAILED, nextRetry = null)
+        return invoice.copy(status = InvoiceStatus.FAILED, retryPaymentTime = null)
     }
 }

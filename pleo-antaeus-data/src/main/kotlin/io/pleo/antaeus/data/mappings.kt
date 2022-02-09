@@ -21,7 +21,7 @@ fun ResultRow.toInvoice(): Invoice = Invoice(
     status = InvoiceStatus.valueOf(this[InvoiceTable.status]),
     customerId = this[InvoiceTable.customerId],
     creationTime = this[InvoiceTable.creationTime],
-    nextRetry = this[InvoiceTable.nextRetry]
+    retryPaymentTime = this[InvoiceTable.retryPaymentTime]
 )
 
 fun ResultRow.toCustomer(): Customer = Customer(

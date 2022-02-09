@@ -32,8 +32,7 @@
     - Checks that each invoice links to an existing customer, and that the customer has the same currency as the invoice
     - Invoices that fail validation have their state set to "failed"
     - Invoices that pass validation get their state set to "ready"
-- [ ] Rename `retryTime` to something like `retryPaymentAfter`
-- [ ] Update jobs to ensure they cannot run multiple times in parallel
+- [x] Rename `retryTime` to `retryPaymentTime`
 - [ ] New recurring job to retry payment of failed invoices
     - Runs every hour
     - Finds all invoices with "failed" status and a non-null and past `retryTime` and processes them again
@@ -43,6 +42,7 @@
     - New API endpoint to retry paying a given invoice
     - This ignores the next retry value
     - Will throw an exception if the invoice status is not "failed"
-    - Will throw an exception if the invoice is not yet due (i.e. not from before the start of the month)
-- [ ] New `rest/v1/invoices/{id}/retry-validation` API
+    - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
+- [ ] New `rest/v1/invoices/{id}/validate` API
     - Re-validates the given invoice using the same logic as the batch job
+- [ ] Update jobs to ensure they cannot run multiple times in parallel
