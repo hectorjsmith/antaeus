@@ -15,6 +15,10 @@ class InvoiceService(private val dal: AntaeusDal) {
         return dal.fetchInvoices()
     }
 
+    fun fetchAllByStatus(statusList: Set<InvoiceStatus>): List<Invoice> {
+        return dal.fetchInvoices(statusList)
+    }
+
     fun fetchAllByStatusAndMaxCreationTime(
         statusList: Set<InvoiceStatus>,
         maxCreationTime: DateTime

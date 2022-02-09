@@ -36,6 +36,17 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
+    fun fetchInvoices(statusList: Set<InvoiceStatus>): List<Invoice> {
+        return transaction(db) {
+            InvoiceTable
+                .select {
+                    InvoiceTable
+                        .status.inList(statusList.map { it.toString() })
+                }
+                .map { it.toInvoice() }
+        }
+    }
+
     fun fetchInvoices(statusList: Set<InvoiceStatus>, maxCreationTime: DateTime): List<Invoice> {
         return transaction(db) {
             InvoiceTable
