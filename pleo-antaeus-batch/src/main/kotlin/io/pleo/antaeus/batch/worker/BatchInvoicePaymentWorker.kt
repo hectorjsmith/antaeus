@@ -10,10 +10,10 @@ import org.joda.time.DateTime
 class BatchInvoicePaymentWorker(
     private val invoiceService: InvoiceService,
     private val billingService: BillingService
-) {
-    private val logger = KotlinLogging.logger("batchInvoiceProcessor")
+): Worker {
+    private val logger = KotlinLogging.logger("BatchInvoicePaymentWorker")
 
-    fun run() {
+    override fun run() {
         val maxCreationTime = calcDateTimeForStartOfMonth(DateTime.now())
 
         val invoices = invoiceService.fetchAllByStatusAndMaxCreationTime(

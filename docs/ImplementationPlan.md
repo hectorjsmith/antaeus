@@ -25,11 +25,12 @@
     - Only grab invoices where the creation date is before the end of the previous month
     - Delegate processing of each invoice to the `BillingService`
 - [x] New invoice validation service
-- [ ] New recurring job to pre-validate invoices
-    - Runs every hour
+- [x] New recurring job to pre-validate invoices
+    - Runs at 09:00 every working day
     - Can be run on-demand (by using an API)
     - Finds all "pending" invoices and validates them
-    - Invoices that fail validation have their state set to "failed" (see error-handling for more behaviour)
+    - Checks that each invoice links to an existing customer, and that the customer has the same currency as the invoice
+    - Invoices that fail validation have their state set to "failed"
     - Invoices that pass validation get their state set to "ready"
 - [ ] Rename `retryTime` to something like `retryPaymentAfter`
 - [ ] Update jobs to ensure they cannot run multiple times in parallel

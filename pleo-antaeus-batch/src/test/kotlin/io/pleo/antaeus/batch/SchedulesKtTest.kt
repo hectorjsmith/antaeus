@@ -33,6 +33,30 @@ class SchedulesKtTest {
                 Arguments.of(format.parse("01/7/2099 00:00:01"))
             )
         }
+
+        @JvmStatic
+        fun nineAmOnEveryWorkingDayDateProvider(): Stream<Arguments> {
+            val format = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+            return Stream.of(
+                Arguments.of(format.parse("03/01/2022 09:00:00")),
+                Arguments.of(format.parse("04/01/2022 09:00:00")),
+                Arguments.of(format.parse("05/01/2022 09:00:00")),
+                Arguments.of(format.parse("06/01/2022 09:00:00")),
+                Arguments.of(format.parse("07/01/2022 09:00:00"))
+            )
+        }
+
+        @JvmStatic
+        fun notNineAmOnEveryWorkingDayDateProvider(): Stream<Arguments> {
+            val format = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+            return Stream.of(
+                Arguments.of(format.parse("01/01/2022 09:00:00")),
+                Arguments.of(format.parse("02/01/2022 09:00:00")),
+                Arguments.of(format.parse("03/01/2022 09:00:01")),
+                Arguments.of(format.parse("04/01/2022 21:00:00")),
+                Arguments.of(format.parse("5/01/2022 08:59:59"))
+            )
+        }
     }
 
     @ParameterizedTest
@@ -57,5 +81,29 @@ class SchedulesKtTest {
 
         // Assert
         Assertions.assertFalse(matches, "Schedule should never be satisfied by dates not on the first day of the month: $date")
+    }
+
+    @ParameterizedTest
+    @MethodSource("nineAmOnEveryWorkingDayDateProvider")
+    fun given_NineAmOnWorkingDaySchedule_When_DatesObjectsAtCorrectTime_Then_ReturnsTrue(
+        date: Date
+    ) {
+        // Act
+        val matches = nineAmOnEveryWorkingDay.isSatisfiedBy(date)
+
+        // Assert
+        Assertions.assertTrue(matches, "Nine AM schedule should be satisfied by date: $date")
+    }
+
+    @ParameterizedTest
+    @MethodSource("notNineAmOnEveryWorkingDayDateProvider")
+    fun given_NineAmOnWorkingDaySchedule_When_DatesObjectsNotAtCorrectTime_Then_ReturnsFalse(
+        date: Date
+    ) {
+        // Act
+        val matches = nineAmOnEveryWorkingDay.isSatisfiedBy(date)
+
+        // Assert
+        Assertions.assertFalse(matches, "Schedule should never be satisfied by incorrect dates: $date")
     }
 }

@@ -1,11 +1,11 @@
 package io.pleo.antaeus.batch.job
 
-import io.pleo.antaeus.batch.firstDayOfEachMonth
-import io.pleo.antaeus.batch.worker.BatchInvoicePaymentWorker
+import io.pleo.antaeus.batch.nineAmOnEveryWorkingDay
+import io.pleo.antaeus.batch.worker.BatchInvoiceValidationWorker
 import org.quartz.*
 
-class InvoicePaymentJob(
-    batchWorker: BatchInvoicePaymentWorker? = null
+class InvoiceValidationJob(
+    batchWorker: BatchInvoiceValidationWorker? = null
 ) : BaseJob(batchWorker) {
 
     override fun execute(context: JobExecutionContext?) {
@@ -16,7 +16,6 @@ class InvoicePaymentJob(
     override fun buildJobDetail(): JobDetail {
         return JobBuilder.newJob(this::class.java)
             .withIdentity(jobName, jobGroup)
-            .requestRecovery()
             .build()
     }
 
@@ -25,8 +24,7 @@ class InvoicePaymentJob(
             .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
             .withSchedule(
                 CronScheduleBuilder
-                    .cronSchedule(firstDayOfEachMonth)
-                    .withMisfireHandlingInstructionFireAndProceed()
+                    .cronSchedule(nineAmOnEveryWorkingDay)
             )
             .build()
     }

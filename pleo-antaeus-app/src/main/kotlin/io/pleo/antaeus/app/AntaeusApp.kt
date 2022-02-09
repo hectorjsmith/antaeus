@@ -13,6 +13,7 @@ import io.pleo.antaeus.batch.startScheduler
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.services.InvoiceValidationService
 import io.pleo.antaeus.rest.AntaeusRest
 import setupInitialData
 import java.io.File
@@ -32,6 +33,11 @@ fun main() {
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
 
+    val invoiceValidationService = InvoiceValidationService(
+        notificationService = notificationService,
+        customerService = customerService
+    )
+
     // This is _your_ billing service to be included where you see fit
     val billingService = BillingService(
         paymentProvider = paymentProvider,
@@ -41,7 +47,8 @@ fun main() {
     // Create and start scheduled jobs
     startScheduler(
         invoiceService = invoiceService,
-        billingService = billingService
+        billingService = billingService,
+        invoiceValidationService = invoiceValidationService
     )
 
     // Create REST web service
