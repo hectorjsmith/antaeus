@@ -37,13 +37,13 @@
     - Runs every hour
     - Finds all invoices with "failed" status and a non-null and past `retryTime` and processes them again
     - When a failed invoice goes from "failed" to "paid", send a notification to the admin
-- [ ] New `rest/v1/invoices/{id}/retry` API
-    - New API endpoint to retry paying a given invoice
-    - This ignores the next retry value
-    - Will throw an exception if the invoice status is not "failed"
-    - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
-- [ ] New `rest/v1/invoices/{id}/validate` API
+- [x] New `rest/v1/invoices/{id}/validate` API
     - Re-validates the given invoice using the same logic as the batch job
+- [ ] New `rest/v1/invoices/{id}/retry` API
+  - New API endpoint to retry paying a given invoice
+  - This ignores the next retry value
+  - Will throw an exception if the invoice status is not "failed"
+  - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
 - [ ] Handle interruptions during payment process
     - Add new `PROCESSING` status
     - Before paying invoice, set status to `PROCESSING` and retry time to +1h and save to DB

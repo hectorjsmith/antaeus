@@ -8,8 +8,10 @@ import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.pleo.antaeus.core.exceptions.EntityNotFoundException
+import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.services.InvoiceValidationService
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -17,11 +19,14 @@ private val thisFile: () -> Unit = {}
 
 class AntaeusRest(
     private val invoiceService: InvoiceService,
-    private val customerService: CustomerService
+    private val customerService: CustomerService,
+    private val billingService: BillingService,
+    private val invoiceValidationService: InvoiceValidationService
 ) : Runnable {
 
     override fun run() {
         app.start(7000)
+
     }
 
     // Set up Javalin rest app
@@ -61,9 +66,23 @@ class AntaeusRest(
                             it.json(invoiceService.fetchAll())
                         }
 
-                        // URL: /rest/v1/invoices/{:id}
-                        get(":id") {
-                            it.json(invoiceService.fetch(it.pathParam("id").toInt()))
+                        path(":id") {
+                            // URL: /rest/v1/invoices/{:id}
+                            get {
+                                it.json(invoiceService.fetch(it.pathParam("id").toInt()))
+                            }
+
+                            // URL: /rest/v1/invoices/{:id}/retry
+                            get("retry") {
+                                it.json("NOT IMPLEMENTED")
+                            }
+
+                            // URL: /rest/v1/invoices/{:id}/validate
+                            get("validate") {
+                                val invoice = invoiceService.fetch(it.pathParam("id").toInt())
+                                it.json(invoiceValidationService.validateAndSaveInvoice(invoice, invoiceService))
+                            }
+
                         }
                     }
 
