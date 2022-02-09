@@ -16,14 +16,20 @@ class InvoiceService(private val dal: AntaeusDal) {
     }
 
     fun fetchAllByStatus(statusList: Set<InvoiceStatus>): List<Invoice> {
-        return dal.fetchInvoices(statusList)
+        return dal.fetchInvoices(statusList = statusList)
+    }
+
+    fun fetchAllFailedByRetryPaymentTime(
+        maxRetryPaymentTime: DateTime
+    ): List<Invoice> {
+        return dal.fetchInvoices(statusList = setOf(InvoiceStatus.FAILED), maxRetryPaymentTime = maxRetryPaymentTime)
     }
 
     fun fetchAllByStatusAndMaxCreationTime(
         statusList: Set<InvoiceStatus>,
         maxCreationTime: DateTime
     ): List<Invoice> {
-        return dal.fetchInvoices(statusList, maxCreationTime)
+        return dal.fetchInvoices(statusList = statusList, maxCreationTime = maxCreationTime)
     }
 
     fun fetch(id: Int): Invoice {

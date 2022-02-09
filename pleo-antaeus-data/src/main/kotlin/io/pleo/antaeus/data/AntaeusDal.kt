@@ -13,6 +13,9 @@ import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
 import io.pleo.antaeus.models.Money
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
@@ -36,25 +39,25 @@ class AntaeusDal(private val db: Database) {
         }
     }
 
-    fun fetchInvoices(statusList: Set<InvoiceStatus>): List<Invoice> {
-        return transaction(db) {
-            InvoiceTable
-                .select {
-                    InvoiceTable
-                        .status.inList(statusList.map { it.toString() })
-                }
-                .map { it.toInvoice() }
+    fun fetchInvoices(
+        statusList: Set<InvoiceStatus>? = null,
+        maxCreationTime: DateTime? = null,
+        maxRetryPaymentTime: DateTime? = null
+    ): List<Invoice> {
+        var query = Op.TRUE as Op<Boolean>
+        if (statusList != null) {
+            query = query.and(InvoiceTable.status.inList(statusList.map { it.toString() }))
         }
-    }
+        if (maxCreationTime != null) {
+            query = query.and(InvoiceTable.creationTime.less(maxCreationTime))
+        }
+        if (maxRetryPaymentTime != null) {
+            query = query.and(InvoiceTable.retryPaymentTime.less(maxRetryPaymentTime))
+        }
 
-    fun fetchInvoices(statusList: Set<InvoiceStatus>, maxCreationTime: DateTime): List<Invoice> {
         return transaction(db) {
             InvoiceTable
-                .select {
-                    InvoiceTable
-                        .status.inList(statusList.map { it.toString() })
-                        .and(InvoiceTable.creationTime.less(maxCreationTime))
-                }
+                .select { query }
                 .map { it.toInvoice() }
         }
     }
