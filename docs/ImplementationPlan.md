@@ -39,7 +39,7 @@
     - When a failed invoice goes from "failed" to "paid", send a notification to the admin
 - [x] New `rest/v1/invoices/{id}/validate` API
     - Re-validates the given invoice using the same logic as the batch job
-- [ ] New `rest/v1/invoices/{id}/retry` API
+- [x] New `rest/v1/invoices/{id}/retry` API
   - New API endpoint to retry paying a given invoice
   - This ignores the next retry value
   - Will throw an exception if the invoice status is not "failed"

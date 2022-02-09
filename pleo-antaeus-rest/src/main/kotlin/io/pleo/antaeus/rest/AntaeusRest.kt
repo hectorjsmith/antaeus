@@ -8,10 +8,12 @@ import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 import io.pleo.antaeus.core.exceptions.EntityNotFoundException
+import io.pleo.antaeus.core.exceptions.InvoiceNotFoundException
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.core.services.InvoiceValidationService
+import io.pleo.antaeus.models.InvoiceStatus
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -74,7 +76,11 @@ class AntaeusRest(
 
                             // URL: /rest/v1/invoices/{:id}/retry
                             get("retry") {
-                                it.json("NOT IMPLEMENTED")
+                                val invoice = invoiceService.fetch(it.pathParam("id").toInt())
+                                if (invoice.status != InvoiceStatus.FAILED) {
+                                    throw Exception("Cannot retry an invoice that is not in the failed state")
+                                }
+                                it.json(billingService.processAndSaveInvoice(invoice))
                             }
 
                             // URL: /rest/v1/invoices/{:id}/validate
