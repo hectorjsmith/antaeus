@@ -1,27 +1,24 @@
 package io.pleo.antaeus.batch.worker
 
-import io.pleo.antaeus.batch.calcDateTimeForStartOfMonth
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.models.InvoiceStatus
 import mu.KotlinLogging
 import org.joda.time.DateTime
 
-class BatchInvoicePaymentWorker(
+class BatchRetryInvoicePaymentWorker(
     private val invoiceService: InvoiceService,
     private val billingService: BillingService
-): Worker {
+) : Worker {
     private val logger = KotlinLogging.logger("BatchInvoicePaymentWorker")
 
     override fun run() {
-        val maxCreationTime = calcDateTimeForStartOfMonth(DateTime.now())
-
-        val invoices = invoiceService.fetchAllByStatusAndMaxCreationTime(
-            statusList = setOf(InvoiceStatus.PENDING, InvoiceStatus.READY),
-            maxCreationTime = maxCreationTime
+        val invoices = invoiceService.fetchAllByStatusAndRetryPaymentTime(
+            statusList = setOf(InvoiceStatus.FAILED),
+            maxRetryPaymentTime = DateTime.now()
         )
 
-        logger.info("Found ${invoices.size} invoices to process")
+        logger.info("Found ${invoices.size} invoices to retry")
         invoices.forEach {
             payInvoice(logger, billingService, invoiceService, it)
         }

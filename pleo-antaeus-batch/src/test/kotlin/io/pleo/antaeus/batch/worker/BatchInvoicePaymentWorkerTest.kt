@@ -17,6 +17,27 @@ import java.math.BigDecimal
 
 internal class BatchInvoicePaymentWorkerTest {
     @Test
+    fun given_BatchWorker_When_Run_Then_FetchFunctionCalledOnceWithCorrectStatus() {
+        // Assemble
+        val invoiceService = mockk<InvoiceService>(relaxed = true)
+        val billingService = mockk<BillingService>(relaxed = true)
+
+        val worker = BatchInvoicePaymentWorker(
+            invoiceService,
+            billingService
+        )
+
+        // Act
+        worker.run()
+
+        // Assert
+        verify(exactly = 1) { invoiceService.fetchAllByStatusAndMaxCreationTime(
+            statusList = setOf(InvoiceStatus.READY, InvoiceStatus.PENDING),
+            maxCreationTime = any()
+        ) }
+    }
+
+    @Test
     fun given_BatchWorker_When_Run_Then_EveryInvoiceFoundIsProcessedAndSaved() {
         // Assemble
         val invoiceSlot = slot<Invoice>()

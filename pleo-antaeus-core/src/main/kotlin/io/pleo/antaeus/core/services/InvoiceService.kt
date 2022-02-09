@@ -19,10 +19,11 @@ class InvoiceService(private val dal: AntaeusDal) {
         return dal.fetchInvoices(statusList = statusList)
     }
 
-    fun fetchAllFailedByRetryPaymentTime(
+    fun fetchAllByStatusAndRetryPaymentTime(
+        statusList: Set<InvoiceStatus>,
         maxRetryPaymentTime: DateTime
     ): List<Invoice> {
-        return dal.fetchInvoices(statusList = setOf(InvoiceStatus.FAILED), maxRetryPaymentTime = maxRetryPaymentTime)
+        return dal.fetchInvoices(statusList = statusList, maxRetryPaymentTime = maxRetryPaymentTime)
     }
 
     fun fetchAllByStatusAndMaxCreationTime(
