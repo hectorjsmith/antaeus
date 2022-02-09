@@ -4,6 +4,7 @@
 
 package io.pleo.antaeus.core.services
 
+import io.pleo.antaeus.core.calcDateTimeForStartOfMonth
 import io.pleo.antaeus.core.exceptions.InvoiceNotFoundException
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.models.Invoice
@@ -11,6 +12,11 @@ import io.pleo.antaeus.models.InvoiceStatus
 import org.joda.time.DateTime
 
 class InvoiceService(private val dal: AntaeusDal) {
+    fun isInvoiceDue(invoice: Invoice, now: DateTime = DateTime.now()): Boolean {
+        val startOfCurrentMonth = calcDateTimeForStartOfMonth(now)
+        return invoice.creationTime.isBefore(startOfCurrentMonth.toInstant())
+    }
+
     fun fetchAll(): List<Invoice> {
         return dal.fetchInvoices()
     }

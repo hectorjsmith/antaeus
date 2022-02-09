@@ -8,10 +8,11 @@ import io.pleo.antaeus.models.InvoiceStatus
 import mu.KotlinLogging
 
 class InvoiceValidationService(
+    private val invoiceService: InvoiceService,
     private val notificationService: NotificationService,
     private val customerService: CustomerService
 ) {
-    fun validateAndSaveInvoice(invoice: Invoice, invoiceService: InvoiceService): Invoice {
+    fun validateAndSaveInvoice(invoice: Invoice): Invoice {
         val validatedInvoice = validateInvoice(invoice)
         return invoiceService.update(validatedInvoice)
     }

@@ -1,9 +1,6 @@
 package io.pleo.antaeus.core.services
 
-import io.pleo.antaeus.core.exceptions.CurrencyMismatchException
-import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
-import io.pleo.antaeus.core.exceptions.InvoiceAlreadyPaidException
-import io.pleo.antaeus.core.exceptions.NetworkException
+import io.pleo.antaeus.core.exceptions.*
 import io.pleo.antaeus.core.external.NotificationService
 import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.models.Invoice
@@ -12,10 +9,11 @@ import mu.KotlinLogging
 import org.joda.time.DateTime
 
 class BillingService(
+    private val invoiceService: InvoiceService,
     private val notificationService: NotificationService,
     private val paymentProvider: PaymentProvider
 ) {
-    fun processAndSaveInvoice(invoice: Invoice, invoiceService: InvoiceService): Invoice {
+    fun processAndSaveInvoice(invoice: Invoice): Invoice {
         val updatedInvoice = processInvoice(invoice)
         return invoiceService.update(updatedInvoice)
     }
@@ -23,6 +21,9 @@ class BillingService(
     fun processInvoice(invoice: Invoice): Invoice {
         if (invoice.status == InvoiceStatus.PAID) {
             throw InvoiceAlreadyPaidException(invoice.id)
+        }
+        if (!invoiceService.isInvoiceDue(invoice)) {
+            throw InvoiceNotDueException(invoice.id)
         }
         try {
             val paymentResult = paymentProvider.charge(invoice)

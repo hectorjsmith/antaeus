@@ -17,7 +17,7 @@ class BatchInvoiceValidationWorker(
         logger.info("Found ${invoices.size} invoices to process")
         invoices.forEach {
             try {
-                invoiceValidationService.validateAndSaveInvoice(it, invoiceService)
+                invoiceValidationService.validateAndSaveInvoice(it)
             } catch(ex: Exception) {
                 logger.warn("Error validating invoice ${it.id}", ex)
             }

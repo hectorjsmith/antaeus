@@ -51,7 +51,7 @@ internal class BatchInvoicePaymentWorkerTest {
         }
 
         val billingService = mockk<BillingService> {
-            every { processAndSaveInvoice(capture(invoiceSlot), any()) } answers { invoiceSlot.captured }
+            every { processAndSaveInvoice(capture(invoiceSlot)) } answers { invoiceSlot.captured }
         }
 
         val worker = BatchInvoicePaymentWorker(
@@ -63,6 +63,6 @@ internal class BatchInvoicePaymentWorkerTest {
         worker.run()
 
         // Assert
-        verify(exactly = 3) { billingService.processAndSaveInvoice(any(), any()) }
+        verify(exactly = 3) { billingService.processAndSaveInvoice(any()) }
     }
 }

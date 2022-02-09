@@ -1,4 +1,4 @@
-package io.pleo.antaeus.batch
+package io.pleo.antaeus.core
 
 import org.joda.time.DateTime
 import org.junit.jupiter.api.Assertions.*

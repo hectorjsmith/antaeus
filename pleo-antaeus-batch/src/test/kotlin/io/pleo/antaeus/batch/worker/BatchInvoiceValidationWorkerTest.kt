@@ -30,7 +30,7 @@ internal class BatchInvoiceValidationWorkerTest {
         }
 
         val validationService = mockk<InvoiceValidationService> {
-            every { validateAndSaveInvoice(capture(invoiceSlot), any()) } answers { invoiceSlot.captured }
+            every { validateAndSaveInvoice(capture(invoiceSlot)) } answers { invoiceSlot.captured }
         }
 
         val worker = BatchInvoiceValidationWorker(
@@ -42,7 +42,7 @@ internal class BatchInvoiceValidationWorkerTest {
         worker.run()
 
         // Assert
-        verify(exactly = 3) { validationService.validateAndSaveInvoice(any(), any()) }
+        verify(exactly = 3) { validationService.validateAndSaveInvoice(any()) }
     }
 
     private fun newInvoice(id: Int): Invoice {

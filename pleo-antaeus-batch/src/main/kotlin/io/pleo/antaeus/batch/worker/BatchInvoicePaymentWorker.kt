@@ -1,6 +1,6 @@
 package io.pleo.antaeus.batch.worker
 
-import io.pleo.antaeus.batch.calcDateTimeForStartOfMonth
+import io.pleo.antaeus.core.calcDateTimeForStartOfMonth
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.models.InvoiceStatus
@@ -24,7 +24,7 @@ class BatchInvoicePaymentWorker(
         logger.info("Found ${invoices.size} invoices to process")
         invoices.forEach {
             try {
-                billingService.processAndSaveInvoice(it, invoiceService)
+                billingService.processAndSaveInvoice(it)
             } catch(ex: Exception) {
                 logger.error("Error paying invoice ${it.id}", ex)
             }

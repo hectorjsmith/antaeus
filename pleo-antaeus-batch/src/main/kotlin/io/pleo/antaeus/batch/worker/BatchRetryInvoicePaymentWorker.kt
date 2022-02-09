@@ -21,7 +21,7 @@ class BatchRetryInvoicePaymentWorker(
         logger.info("Found ${invoices.size} invoices to retry")
         invoices.forEach {
             try {
-                billingService.processAndSaveInvoice(it, invoiceService)
+                billingService.processAndSaveInvoice(it)
             } catch(ex: Exception) {
                 logger.error("Error retrying invoice payment ${it.id}", ex)
             }

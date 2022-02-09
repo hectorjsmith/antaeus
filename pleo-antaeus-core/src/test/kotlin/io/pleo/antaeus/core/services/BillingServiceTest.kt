@@ -20,6 +20,9 @@ import java.math.BigDecimal
 
 internal class BillingServiceTest {
     private val mockkNotificationService = mockk<NotificationService>(relaxed = true)
+    private val mockkInvoiceService = mockk<InvoiceService> {
+        every { isInvoiceDue(any(), any()) } returns true
+    }
 
     @Test
     fun given_PaidInvoice_When_Charged_Then_ExceptionThrown() {
@@ -28,7 +31,7 @@ internal class BillingServiceTest {
         val paymentProvider = mockk<PaymentProvider> {
             every { charge(paidInvoice) } returns true
         }
-        val billingService = BillingService(mockkNotificationService, paymentProvider)
+        val billingService = BillingService(mockkInvoiceService, mockkNotificationService, paymentProvider)
 
         // Act / Assert
         assertThrows<InvoiceAlreadyPaidException> { billingService.processInvoice(paidInvoice) }
@@ -41,7 +44,7 @@ internal class BillingServiceTest {
         val paymentProvider = mockk<PaymentProvider> {
             every { charge(invoice) } returns true
         }
-        val billingService = BillingService(mockkNotificationService, paymentProvider)
+        val billingService = BillingService(mockkInvoiceService, mockkNotificationService, paymentProvider)
 
         // Act
         val updatedInvoice = billingService.processInvoice(invoice)
@@ -57,7 +60,7 @@ internal class BillingServiceTest {
         val paymentProvider = mockk<PaymentProvider> {
             every { charge(invoice) } returns false
         }
-        val billingService = BillingService(mockkNotificationService, paymentProvider)
+        val billingService = BillingService(mockkInvoiceService, mockkNotificationService, paymentProvider)
 
         // Act
         val updatedInvoice = billingService.processInvoice(invoice)
@@ -75,7 +78,7 @@ internal class BillingServiceTest {
         val paymentProvider = mockk<PaymentProvider> {
             every { charge(invoice) } throws(NetworkException())
         }
-        val billingService = BillingService(mockkNotificationService, paymentProvider)
+        val billingService = BillingService(mockkInvoiceService, mockkNotificationService, paymentProvider)
 
         // Act
         val updatedInvoice = billingService.processInvoice(invoice)
@@ -93,7 +96,7 @@ internal class BillingServiceTest {
         val paymentProvider = mockk<PaymentProvider> {
             every { charge(invoice) } throws(CustomerNotFoundException(invoice.customerId))
         }
-        val billingService = BillingService(mockkNotificationService, paymentProvider)
+        val billingService = BillingService(mockkInvoiceService, mockkNotificationService, paymentProvider)
 
         // Act
         val updatedInvoice = billingService.processInvoice(invoice)
@@ -110,7 +113,7 @@ internal class BillingServiceTest {
         val paymentProvider = mockk<PaymentProvider> {
             every { charge(invoice) } throws(CurrencyMismatchException(invoice.id, invoice.customerId))
         }
-        val billingService = BillingService(mockkNotificationService, paymentProvider)
+        val billingService = BillingService(mockkInvoiceService, mockkNotificationService, paymentProvider)
 
         // Act
         val updatedInvoice = billingService.processInvoice(invoice)

@@ -80,7 +80,7 @@ class AntaeusRest(
                             // URL: /rest/v1/invoices/{:id}/validate
                             get("validate") {
                                 val invoice = invoiceService.fetch(it.pathParam("id").toInt())
-                                it.json(invoiceValidationService.validateAndSaveInvoice(invoice, invoiceService))
+                                it.json(invoiceValidationService.validateAndSaveInvoice(invoice))
                             }
 
                         }
