@@ -37,6 +37,24 @@ internal class InvoiceValidationServiceTest {
     }
 
     @Test
+    fun given_FailedInvoiceThatIsNowValid_When_Validated_Then_InvoiceStatusSetToReady() {
+        // Assemble
+        val currency = Currency.EUR
+        val customerService = mockk<CustomerService> {
+            every { fetch(capture(intSlot)) } answers { Customer(intSlot.captured, currency) }
+        }
+        val validationService = InvoiceValidationService(notificationService, customerService)
+        val invoice = newInvoice(currency).copy(status = InvoiceStatus.FAILED)
+        assertEquals(InvoiceStatus.FAILED, invoice.status, "Invoice status should be FAILED before test - this is an invalid test")
+
+        // Act
+        val newInvoice = validationService.validateInvoice(invoice)
+
+        // Assert
+        assertEquals(InvoiceStatus.READY, newInvoice.status, "Invoice status should be set to READY when no errors found")
+    }
+
+    @Test
     fun given_InvoiceAndCustomerWithDifferentCurrencies_When_Validated_Then_InvoiceStatusSetToFailed() {
         // Assemble
         val invoiceCurrency = Currency.EUR
