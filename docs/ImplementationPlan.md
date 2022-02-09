@@ -24,21 +24,24 @@
     - Finds all "ready" invoices and tries to pay them
     - Only grab invoices where the creation date is before the end of the previous month
     - Delegate processing of each invoice to the `BillingService`
+- [x] New invoice validation service
 - [ ] New recurring job to pre-validate invoices
     - Runs every hour
     - Can be run on-demand (by using an API)
     - Finds all "pending" invoices and validates them
     - Invoices that fail validation have their state set to "failed" (see error-handling for more behaviour)
     - Invoices that pass validation get their state set to "ready"
+- [ ] Rename `retryTime` to something like `retryPaymentAfter`
 - [ ] Update jobs to ensure they cannot run multiple times in parallel
-- [ ] New recurring job to retry failed invoices
+- [ ] New recurring job to retry payment of failed invoices
     - Runs every hour
     - Finds all invoices with "failed" status and a non-null and past `retryTime` and processes them again
     - Try to pay the invoice if validations pass
     - When a failed invoice goes from "failed" to "paid", send a notification to the admin
 - [ ] New `rest/v1/invoices/{id}/retry` API
-    - New API endpoint to re-process a given invoice
+    - New API endpoint to retry paying a given invoice
     - This ignores the next retry value
     - Will throw an exception if the invoice status is not "failed"
-- [ ] New `rest/v1/job/pre-validation/run` API
-    - Runs the pre-validation batch job on demand
+    - Will throw an exception if the invoice is not yet due (i.e. not from before the start of the month)
+- [ ] New `rest/v1/invoices/{id}/retry-validation` API
+    - Re-validates the given invoice using the same logic as the batch job
