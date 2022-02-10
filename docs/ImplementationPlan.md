@@ -45,7 +45,7 @@
   - Will throw an exception if the invoice status is not "failed"
   - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
 - [x] Fix JSON formatting of dates in Rest API
-- [ ] Handle interruptions during payment process
+- [x] Handle interruptions during payment process
     - Add new `PROCESSING` status
     - Before paying invoice, set status to `PROCESSING` and retry time to +1h and save to DB
     - After payment, set the status accordingly (and reset retry time)

@@ -14,16 +14,21 @@ class BatchRetryInvoicePaymentWorker(
 
     override fun run() {
         val invoices = invoiceService.fetchAllByStatusAndRetryPaymentTime(
-            statusList = setOf(InvoiceStatus.FAILED),
+            statusList = setOf(InvoiceStatus.FAILED, InvoiceStatus.PROCESSING),
             maxRetryPaymentTime = DateTime.now()
         )
 
         logger.info("Found ${invoices.size} invoices to retry")
         invoices.forEach {
-            try {
-                billingService.processAndSaveInvoice(it)
-            } catch(ex: Exception) {
-                logger.error("Error retrying invoice payment ${it.id}", ex)
+            if (it.status == InvoiceStatus.PROCESSING) {
+                logger.error("Found invoice ${it.id} stuck in PROCESSING state - Needs manual review")
+                invoiceService.update(it.copy(status = InvoiceStatus.FAILED, retryPaymentTime = null))
+            } else {
+                try {
+                    billingService.processAndSaveInvoice(it)
+                } catch(ex: Exception) {
+                    logger.error("Error retrying invoice payment ${it.id}", ex)
+                }
             }
         }
     }

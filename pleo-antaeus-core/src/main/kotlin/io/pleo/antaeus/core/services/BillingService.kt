@@ -13,18 +13,21 @@ class BillingService(
     private val notificationService: NotificationService,
     private val paymentProvider: PaymentProvider
 ) {
+    private val maxHoursInProcessing = 1
+
     fun processAndSaveInvoice(invoice: Invoice): Invoice {
-        val updatedInvoice = processInvoice(invoice)
+        assertInvoiceInValidState(invoice)
+        val processingInvoice = invoiceService.update(
+            invoice.copy(
+                status = InvoiceStatus.PROCESSING,
+                retryPaymentTime = DateTime.now().plusHours(maxHoursInProcessing)
+            )
+        )
+        val updatedInvoice = processInvoice(processingInvoice)
         return invoiceService.update(updatedInvoice)
     }
 
-    fun processInvoice(invoice: Invoice): Invoice {
-        if (invoice.status == InvoiceStatus.PAID) {
-            throw InvoiceAlreadyPaidException(invoice.id)
-        }
-        if (!invoiceService.isInvoiceDue(invoice)) {
-            throw InvoiceNotDueException(invoice.id)
-        }
+    private fun processInvoice(invoice: Invoice): Invoice {
         try {
             val paymentResult = paymentProvider.charge(invoice)
             if (!paymentResult) {
@@ -39,6 +42,18 @@ class BillingService(
             return handleNetworkException(invoice, ex)
         } catch(ex: Exception) {
             return handleOtherException(invoice, ex)
+        }
+    }
+
+    private fun assertInvoiceInValidState(invoice: Invoice) {
+        if (invoice.status == InvoiceStatus.PAID) {
+            throw InvoiceAlreadyPaidException(invoice.id)
+        }
+        if (invoice.status == InvoiceStatus.PROCESSING) {
+            throw InvoiceAlreadyInProcessException(invoice.id)
+        }
+        if (!invoiceService.isInvoiceDue(invoice)) {
+            throw InvoiceNotDueException(invoice.id)
         }
     }
 
