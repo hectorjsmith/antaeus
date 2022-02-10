@@ -4,6 +4,8 @@
 
 package io.pleo.antaeus.rest
 
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
@@ -15,6 +17,8 @@ import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.core.services.InvoiceValidationService
 import io.pleo.antaeus.models.InvoiceStatus
 import mu.KotlinLogging
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 
 private val logger = KotlinLogging.logger {}
 private val thisFile: () -> Unit = {}
@@ -31,9 +35,32 @@ class AntaeusRest(
 
     }
 
+    class JavalinMapper : io.javalin.plugin.json.JsonMapper {
+        private val mapper = JsonMapper()
+            .registerModule(JodaModule())
+
+        override fun toJsonString(obj: Any): String {
+            return mapper.writeValueAsString(obj)
+        }
+
+        override fun toJsonStream(obj: Any): InputStream {
+            return ByteArrayInputStream(mapper.writeValueAsBytes(obj))
+        }
+
+        override fun <T : Any?> fromJsonString(json: String, targetClass: Class<T>): T {
+            return mapper.readValue(json, targetClass)
+        }
+
+        override fun <T : Any?> fromJsonStream(json: InputStream, targetClass: Class<T>): T {
+            return mapper.readValue(json, targetClass)
+        }
+    }
+
     // Set up Javalin rest app
     private val app = Javalin
-        .create()
+        .create {
+            it.jsonMapper(JavalinMapper())
+        }
         .apply {
             // InvoiceNotFoundException: return 404 HTTP status code
             exception(EntityNotFoundException::class.java) { _, ctx ->
@@ -68,7 +95,7 @@ class AntaeusRest(
                             it.json(invoiceService.fetchAll())
                         }
 
-                        path(":id") {
+                        path("{id}") {
                             // URL: /rest/v1/invoices/{:id}
                             get {
                                 it.json(invoiceService.fetch(it.pathParam("id").toInt()))
@@ -99,7 +126,7 @@ class AntaeusRest(
                         }
 
                         // URL: /rest/v1/customers/{:id}
-                        get(":id") {
+                        get("{id}") {
                             it.json(customerService.fetch(it.pathParam("id").toInt()))
                         }
                     }

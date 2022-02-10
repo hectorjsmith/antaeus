@@ -44,6 +44,7 @@
   - This ignores the next retry value
   - Will throw an exception if the invoice status is not "failed"
   - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
+- [x] Fix JSON formatting of dates in Rest API
 - [ ] Handle interruptions during payment process
     - Add new `PROCESSING` status
     - Before paying invoice, set status to `PROCESSING` and retry time to +1h and save to DB
@@ -51,3 +52,4 @@
     - When running the validation or payment retry job, find any invoices in `PROCESSING` state where the next retry time is in the past
         - Set the status to `FAILED`, reset retry time, and notify admin (invoice processing was interrupted, manual intervention required) 
 - [ ] Update jobs to ensure they cannot run multiple times in parallel
+- [ ] Better exception handling in API
