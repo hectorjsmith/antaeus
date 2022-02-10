@@ -5,4 +5,5 @@
 - Understanding the existing code: 1h
 - Understand problem and design solution: 2h
 - Build out an initial implementation plan: 3h
-- Implement code changes: 14h
+- Implement code changes: 15h
+- Update documentation: 1h

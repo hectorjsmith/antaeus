@@ -10,6 +10,7 @@ As most "Software as a Service" (SaaS) companies, Pleo needs to charge a subscri
 
 ## My Solution
 
+* [GitHub Diff](https://github.com/hectorjsmith/antaeus/compare/69d5ced3109f1ba1eac06ee557c25114720a4d65...master) - diff of all the changes I made
 * [How I spent my time](docs/TimeTracker.md)
 * [Major decisions I made](docs/MajorDecisions.md)
 * [My implementation plan / todo list](docs/ImplementationPlan.md)
