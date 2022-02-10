@@ -51,5 +51,5 @@
     - After payment, set the status accordingly (and reset retry time)
     - When running the validation or payment retry job, find any invoices in `PROCESSING` state where the next retry time is in the past
         - Set the status to `FAILED`, reset retry time, and notify admin (invoice processing was interrupted, manual intervention required) 
-- [ ] Update jobs to ensure they cannot run multiple times in parallel
+- [x] Update jobs to ensure they cannot run multiple times in parallel
 - [ ] Better exception handling in API

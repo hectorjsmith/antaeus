@@ -7,10 +7,10 @@ import org.quartz.JobExecutionContext
 import org.quartz.Trigger
 
 abstract class BaseJob(worker: Worker? = null) : Job {
-    protected val jobGroup = this::class.java.packageName
-    protected val jobName = this::class.java.simpleName
     val detail : JobDetail by lazy { buildJobDetail() }
     val trigger : Trigger by lazy { buildJobTrigger() }
+    protected val jobGroup = this::class.java.packageName
+    protected val jobName = this::class.java.simpleName
     private val contextId = "${jobGroup}_${jobName}_ctx"
 
     init {

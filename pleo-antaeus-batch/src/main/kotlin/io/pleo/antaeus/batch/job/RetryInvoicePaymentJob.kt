@@ -5,12 +5,14 @@ import io.pleo.antaeus.batch.worker.BatchRetryInvoicePaymentWorker
 import org.quartz.*
 
 class RetryInvoicePaymentJob(
-    worker: BatchRetryInvoicePaymentWorker
+    worker: BatchRetryInvoicePaymentWorker? = null
 ) : BaseJob(worker) {
 
     override fun execute(context: JobExecutionContext?) {
-        val worker = getWorkerFromContext(context)
-        worker.run()
+        withLock {
+            val worker = getWorkerFromContext(context)
+            worker.run()
+        }
     }
 
     override fun buildJobDetail(): JobDetail {

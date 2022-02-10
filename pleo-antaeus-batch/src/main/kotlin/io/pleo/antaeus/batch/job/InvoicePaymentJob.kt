@@ -9,8 +9,10 @@ class InvoicePaymentJob(
 ) : BaseJob(batchWorker) {
 
     override fun execute(context: JobExecutionContext?) {
-        val worker = getWorkerFromContext(context)
-        worker.run()
+        withLock {
+            val worker = getWorkerFromContext(context)
+            worker.run()
+        }
     }
 
     override fun buildJobDetail(): JobDetail {
