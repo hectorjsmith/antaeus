@@ -7,6 +7,7 @@ import io.pleo.antaeus.batch.job.RetryInvoicePaymentJob
 import io.pleo.antaeus.batch.worker.BatchInvoicePaymentWorker
 import io.pleo.antaeus.batch.worker.BatchInvoiceValidationWorker
 import io.pleo.antaeus.batch.worker.BatchRetryInvoicePaymentWorker
+import io.pleo.antaeus.core.external.NotificationService
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.core.services.InvoiceValidationService
@@ -19,7 +20,8 @@ private val scheduler = StdSchedulerFactory.getDefaultScheduler()
 fun startScheduler(
     invoiceService: InvoiceService,
     billingService: BillingService,
-    invoiceValidationService: InvoiceValidationService
+    invoiceValidationService: InvoiceValidationService,
+    notificationService: NotificationService
 ) {
     scheduler.clear()
 
@@ -34,7 +36,8 @@ fun startScheduler(
     // Setup job to retry failed invoices
     val batchRetryInvoicePaymentWorker = BatchRetryInvoicePaymentWorker(
         invoiceService = invoiceService,
-        billingService = billingService
+        billingService = billingService,
+        notificationService = notificationService
     )
     val retryInvoicePaymentJob = RetryInvoicePaymentJob(batchRetryInvoicePaymentWorker)
     scheduleJob(retryInvoicePaymentJob)

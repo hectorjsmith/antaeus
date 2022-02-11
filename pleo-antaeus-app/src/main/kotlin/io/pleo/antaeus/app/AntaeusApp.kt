@@ -51,7 +51,8 @@ fun main() {
     startScheduler(
         invoiceService = invoiceService,
         billingService = billingService,
-        invoiceValidationService = invoiceValidationService
+        invoiceValidationService = invoiceValidationService,
+        notificationService = notificationService
     )
 
     // Create REST web service

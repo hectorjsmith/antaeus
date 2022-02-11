@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import io.pleo.antaeus.core.external.NotificationService
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.models.Currency
@@ -17,15 +18,18 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 internal class BatchRetryInvoicePaymentWorkerTest {
+    private val notificationService = mockk<NotificationService>(relaxed = true)
+    private val billingService = mockk<BillingService>(relaxed = true)
+
     @Test
     fun given_BatchWorker_When_Run_Then_FetchFunctionCalledOnceWithCorrectStatus() {
         // Assemble
         val invoiceService = mockk<InvoiceService>(relaxed = true)
-        val billingService = mockk<BillingService>(relaxed = true)
 
         val worker = BatchRetryInvoicePaymentWorker(
             invoiceService,
-            billingService
+            billingService,
+            notificationService
         )
 
         // Act
@@ -50,11 +54,11 @@ internal class BatchRetryInvoicePaymentWorkerTest {
                 invoiceInDb
             }
         }
-        val billingService = mockk<BillingService>(relaxed = true)
 
         val worker = BatchRetryInvoicePaymentWorker(
             invoiceService,
-            billingService
+            billingService,
+            notificationService
         )
 
         // Act
