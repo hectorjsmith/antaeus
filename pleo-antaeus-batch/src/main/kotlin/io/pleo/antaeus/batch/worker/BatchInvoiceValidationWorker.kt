@@ -14,7 +14,7 @@ class BatchInvoiceValidationWorker(
     override fun run() {
         val invoices = invoiceService.fetchAllByStatus(setOf(InvoiceStatus.PENDING))
 
-        logger.info("Found ${invoices.size} invoices to process")
+        logger.info("Found ${invoices.size} invoices to pre-validate")
         invoices.forEach {
             try {
                 invoiceValidationService.validateAndSaveInvoice(it)

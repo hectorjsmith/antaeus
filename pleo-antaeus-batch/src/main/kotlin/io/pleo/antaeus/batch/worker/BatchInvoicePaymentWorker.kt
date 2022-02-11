@@ -14,11 +14,12 @@ class BatchInvoicePaymentWorker(
     private val logger = KotlinLogging.logger("BatchInvoicePaymentWorker")
 
     override fun run() {
-        val maxCreationTime = calcDateTimeForStartOfMonth(DateTime.now())
+        val startOfMonth = calcDateTimeForStartOfMonth(DateTime.now())
 
+        // Find all invoices ready for payment created before the start of the month (i.e. that are due for payment)
         val invoices = invoiceService.fetchAllByStatusAndMaxCreationTime(
             statusList = setOf(InvoiceStatus.PENDING, InvoiceStatus.READY),
-            maxCreationTime = maxCreationTime
+            maxCreationTime = startOfMonth
         )
 
         logger.info("Found ${invoices.size} invoices to process")

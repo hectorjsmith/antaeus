@@ -5,6 +5,7 @@ import io.pleo.antaeus.batch.worker.BatchRetryInvoicePaymentWorker
 import org.quartz.*
 
 class RetryInvoicePaymentJob(
+    // This needs a no-args constructor for Quartz
     worker: BatchRetryInvoicePaymentWorker? = null
 ) : BaseJob(worker) {
 

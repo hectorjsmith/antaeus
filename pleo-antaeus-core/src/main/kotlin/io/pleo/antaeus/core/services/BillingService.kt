@@ -13,8 +13,15 @@ class BillingService(
     private val notificationService: NotificationService,
     private val paymentProvider: PaymentProvider
 ) {
+    // This determines how long an invoice can be stuck in the PROCESSING state before it can be flagged as FAILED
     private val maxHoursInProcessing = 1
 
+    /**
+     * Attempt to pay the provided invoice and save the updated invoice back to the database.
+     *
+     * @param invoice The invoice to pay
+     * @return The updated invoice with the status and retryPaymentTime properties set based on whether the payment was successful
+     */
     fun processAndSaveInvoice(invoice: Invoice): Invoice {
         assertInvoiceInValidState(invoice)
         val processingInvoice = invoiceService.update(
@@ -45,6 +52,7 @@ class BillingService(
         }
     }
 
+    // Run initial checks on the invoice to ensure it is in the right state to attempt payment
     private fun assertInvoiceInValidState(invoice: Invoice) {
         if (invoice.status == InvoiceStatus.PAID) {
             throw InvoiceAlreadyPaidException(invoice.id)

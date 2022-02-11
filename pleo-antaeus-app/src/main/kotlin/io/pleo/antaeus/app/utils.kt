@@ -41,6 +41,7 @@ internal fun getPaymentProvider(): PaymentProvider {
     }
 }
 
+// Create stubbed notification service. It just logs any notifications
 internal fun getNotificationService(): NotificationService {
     return object : NotificationService {
         val logger = KotlinLogging.logger("notificationService")

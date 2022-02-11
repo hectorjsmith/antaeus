@@ -41,27 +41,6 @@ class AntaeusRest(
         app.start(7000)
     }
 
-    class JavalinMapper : io.javalin.plugin.json.JsonMapper {
-        private val mapper = JsonMapper()
-            .registerModule(JodaModule())
-
-        override fun toJsonString(obj: Any): String {
-            return mapper.writeValueAsString(obj)
-        }
-
-        override fun toJsonStream(obj: Any): InputStream {
-            return ByteArrayInputStream(mapper.writeValueAsBytes(obj))
-        }
-
-        override fun <T : Any?> fromJsonString(json: String, targetClass: Class<T>): T {
-            return mapper.readValue(json, targetClass)
-        }
-
-        override fun <T : Any?> fromJsonStream(json: InputStream, targetClass: Class<T>): T {
-            return mapper.readValue(json, targetClass)
-        }
-    }
-
     // Set up Javalin rest app
     private val app = Javalin
         .create {
@@ -73,6 +52,7 @@ class AntaeusRest(
                 ctx.status(HttpCode.NOT_FOUND)
             }
 
+            // Handle exceptions related to trying to process an invoice that should not be processed
             exception(InvoiceAlreadyPaidException::class.java)  { ex, ctx -> handleBadRequestException(ex, ctx) }
             exception(InvoiceNotDueException::class.java) { ex, ctx -> handleBadRequestException(ex, ctx) }
             exception(InvoiceAlreadyInProcessException::class.java) { ex, ctx -> handleBadRequestException(ex, ctx) }
@@ -149,5 +129,26 @@ class AntaeusRest(
                 }
             }
         }
+    }
+}
+
+class JavalinMapper : io.javalin.plugin.json.JsonMapper {
+    private val mapper = JsonMapper()
+        .registerModule(JodaModule())
+
+    override fun toJsonString(obj: Any): String {
+        return mapper.writeValueAsString(obj)
+    }
+
+    override fun toJsonStream(obj: Any): InputStream {
+        return ByteArrayInputStream(mapper.writeValueAsBytes(obj))
+    }
+
+    override fun <T : Any?> fromJsonString(json: String, targetClass: Class<T>): T {
+        return mapper.readValue(json, targetClass)
+    }
+
+    override fun <T : Any?> fromJsonStream(json: InputStream, targetClass: Class<T>): T {
+        return mapper.readValue(json, targetClass)
     }
 }

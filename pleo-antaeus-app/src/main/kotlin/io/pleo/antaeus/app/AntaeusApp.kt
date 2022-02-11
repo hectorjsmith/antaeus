@@ -33,6 +33,7 @@ fun main() {
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
 
+    // Create an invoice validation service
     val invoiceValidationService = InvoiceValidationService(
         invoiceService = invoiceService,
         notificationService = notificationService,

@@ -12,12 +12,22 @@ class InvoiceValidationService(
     private val notificationService: NotificationService,
     private val customerService: CustomerService
 ) {
+    /**
+     * Validate the provided invoice and save the updated invoice back to the database.
+     * This validation will check that the invoice references an existing customer and that the invoice amount and
+     * corresponding customer use the same currency.
+     * The invoice will be flagged as FAILED if any validations fail.
+     * The notification service will be used to notify the system admin of any failures.
+     *
+     * @param invoice Invoice to validate
+     * @return Updated invoice after validation
+     */
     fun validateAndSaveInvoice(invoice: Invoice): Invoice {
         val validatedInvoice = validateInvoice(invoice)
         return invoiceService.update(validatedInvoice)
     }
 
-    fun validateInvoice(invoice: Invoice): Invoice {
+    private fun validateInvoice(invoice: Invoice): Invoice {
         if (invoice.status == InvoiceStatus.PAID) {
             throw InvoiceAlreadyPaidException(invoice.id)
         }

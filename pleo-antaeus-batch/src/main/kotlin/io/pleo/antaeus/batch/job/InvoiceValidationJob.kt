@@ -5,6 +5,7 @@ import io.pleo.antaeus.batch.worker.BatchInvoiceValidationWorker
 import org.quartz.*
 
 class InvoiceValidationJob(
+    // This needs a no-args constructor for Quartz
     batchWorker: BatchInvoiceValidationWorker? = null
 ) : BaseJob(batchWorker) {
 
@@ -30,5 +31,4 @@ class InvoiceValidationJob(
             )
             .build()
     }
-
 }

@@ -15,9 +15,11 @@ import java.math.BigDecimal
 
 internal class InvoiceValidationServiceTest {
     private val intSlot = slot<Int>()
+    private val invoiceSlot = slot<Invoice>()
     private val notificationService = mockk<NotificationService>(relaxed = true)
     private val mockkInvoiceService = mockk<InvoiceService>(relaxed = true) {
         every { isInvoiceDue(any()) } returns true
+        every { update(capture(invoiceSlot)) } answers { invoiceSlot.captured }
     }
 
     @Test
@@ -32,7 +34,7 @@ internal class InvoiceValidationServiceTest {
         assertNotEquals(InvoiceStatus.READY, invoice.status, "Invoice status should not be READY before test - this is an invalid test")
 
         // Act
-        val newInvoice = validationService.validateInvoice(invoice)
+        val newInvoice = validationService.validateAndSaveInvoice(invoice)
 
         // Assert
         assertEquals(InvoiceStatus.READY, newInvoice.status, "Invoice status should be set to READY when no errors found")
@@ -50,7 +52,7 @@ internal class InvoiceValidationServiceTest {
         assertEquals(InvoiceStatus.FAILED, invoice.status, "Invoice status should be FAILED before test - this is an invalid test")
 
         // Act
-        val newInvoice = validationService.validateInvoice(invoice)
+        val newInvoice = validationService.validateAndSaveInvoice(invoice)
 
         // Assert
         assertEquals(InvoiceStatus.READY, newInvoice.status, "Invoice status should be set to READY when no errors found")
@@ -70,7 +72,7 @@ internal class InvoiceValidationServiceTest {
         assertNotEquals(invoiceCurrency, customerCurrency, "Invoice currency should not match customer currency - this is an invalid test")
 
         // Act
-        val newInvoice = validationService.validateInvoice(invoice)
+        val newInvoice = validationService.validateAndSaveInvoice(invoice)
 
         // Assert
         assertEquals(InvoiceStatus.FAILED, newInvoice.status, "Invoice status should be set to FAILED when validation fails")
@@ -87,7 +89,7 @@ internal class InvoiceValidationServiceTest {
         assertNotEquals(InvoiceStatus.FAILED, invoice.status, "Invoice status should not be FAILED before test - this is an invalid test")
 
         // Act
-        val newInvoice = validationService.validateInvoice(invoice)
+        val newInvoice = validationService.validateAndSaveInvoice(invoice)
 
         // Assert
         assertEquals(InvoiceStatus.FAILED, newInvoice.status, "Invoice status should be set to FAILED when validation fails")
@@ -101,7 +103,7 @@ internal class InvoiceValidationServiceTest {
         val invoice = newInvoice(Currency.EUR).copy(status = InvoiceStatus.PAID)
 
         // Act / Assert
-        assertThrows<InvoiceAlreadyPaidException> { validationService.validateInvoice(invoice) }
+        assertThrows<InvoiceAlreadyPaidException> { validationService.validateAndSaveInvoice(invoice) }
     }
 
     private fun newInvoice(currency: Currency): Invoice {
