@@ -1,5 +1,13 @@
 # Major Decisions
 
+## InvoiceStatus
+I added a few new InvoiceStatus values. Their meaning is as follows:
+- PENDING: Invoice has just arrived in the system and hasn't been touched yet
+- READY: Invoice has been through the pre-validation process and passed
+- PROCESSING: Invoice is currency in the process of being paid
+- PAID: Invoice has been successfully paid
+- FAILED: This invoice has failed either pre-validation or payment
+
 ## Notification Service
 I added a notification service to handle notifying a system administrator and/or the account owner of any errors.
 
@@ -29,7 +37,7 @@ I figured this would allow for system admins to detect these failures early and 
 ## Retrying Payments
 In certain cases, invoices that fail to be charged will be retried automatically. I decided to set this up as follows:
 - Network Errors: Can be retried after 1 hour
-- Not enough funds: Can be retried after 1 day
+- Not enough funds errors: Can be retried after 1 day
 
 All other errors are not automatically retried.
 

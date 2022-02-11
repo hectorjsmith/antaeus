@@ -1,9 +1,10 @@
 # Implementation Plan
 
+## Things completed
 - [x] New invoice states:
-    - `ready`
+    - `READY`
         - This is to flag invoices that have been pre-validated and are ready to be paid
-    - `failed`
+    - `FAILED`
         - To flag invoices that have failed for some reason
 - [x] New fields on invoices:
     - `nextRetry` (datetime)
@@ -21,29 +22,28 @@
 - [x] Implement `BillingService` class to process invoices
 - [x] New recurring job to pay invoices
     - Runs on the first day of the month
-    - Finds all "ready" invoices and tries to pay them
+    - Finds all `READY` invoices and tries to pay them
     - Only grab invoices where the creation date is before the end of the previous month
     - Delegate processing of each invoice to the `BillingService`
 - [x] New invoice validation service
 - [x] New recurring job to pre-validate invoices
     - Runs at 09:00 every working day
-    - Can be run on-demand (by using an API)
-    - Finds all "pending" invoices and validates them
+    - Finds all `PENDING` invoices and validates them
     - Checks that each invoice links to an existing customer, and that the customer has the same currency as the invoice
-    - Invoices that fail validation have their state set to "failed"
-    - Invoices that pass validation get their state set to "ready"
+    - Invoices that fail validation have their state set to `FAILED`
+    - Invoices that pass validation get their state set to `READY`
 - [x] Rename `retryTime` to `retryPaymentTime`
 - [x] New recurring job to retry payment of failed invoices
     - Runs every hour
-    - Finds all invoices with "failed" status and a non-null and past `retryTime` and processes them again
-    - When a failed invoice goes from "failed" to "paid", send a notification to the admin
+    - Finds all invoices with `FAILED` status and a non-null and past `retryPaymentTime` and processes them again
+    - When a failed invoice goes from `FAILED` to `PAID`, send a notification to the admin
 - [x] New `rest/v1/invoices/{id}/validate` API
     - Re-validates the given invoice using the same logic as the batch job
 - [x] New `rest/v1/invoices/{id}/retry` API
-  - New API endpoint to retry paying a given invoice
-  - This ignores the next retry value
-  - Will throw an exception if the invoice status is not "failed"
-  - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
+    - New API endpoint to retry paying a given invoice
+    - This ignores the next retry value
+    - Will throw an exception if the invoice status is not `FAILED`
+    - Will throw an exception if the invoice is not yet due (i.e. creation time not from before the start of the month)
 - [x] Fix JSON formatting of dates in Rest API
 - [x] Handle interruptions during payment process
     - Add new `PROCESSING` status
@@ -53,3 +53,15 @@
         - Set the status to `FAILED`, reset retry time, and notify admin (invoice processing was interrupted, manual intervention required) 
 - [x] Update jobs to ensure they cannot run multiple times in parallel
 - [x] Better exception handling in API
+
+## Other things I thought of, but didn't do
+- Service to automatically exchange currencies
+    - This would be an external service that has up-to-date exchange rate information 
+    - When a currency mismatch is found, the service is called to exchange one currency for another
+    - The invoice is then updated with the new "money" data
+    - Alternatively, the service is only invoked when triggered by an API call (this ensures there is some human supervision)
+- More complete API for updating invoices
+    - Add more API endpoints to update an invoice
+    - Some fields cannot be changed (e.g. id & creationTime)
+    - Other fields may be editable (e.g. customer ID or monetary amount/currency)
+    - This would provide a way to fix invoices that have failed

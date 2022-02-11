@@ -6,4 +6,4 @@
 - Understand problem and design solution: 2h
 - Build out an initial implementation plan: 3h
 - Implement code changes: 15h
-- Update documentation: 1h
+- Update documentation: 2h
